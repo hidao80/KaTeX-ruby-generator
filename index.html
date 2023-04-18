@@ -56,8 +56,8 @@
                         <option value="\large">large</option>
                         <option value="\normalsize">normalsize（標準）</option>
                         <option value="\footnotesize">footnotesize</option>
-                        <option value="\scriptsize" selected>scriptsize（オススメ）</option>
-                        <option value="\tiny">tiny（とても小さい）</option>
+                        <option value="\scriptsize">scriptsize</option>
+                        <option value="\tiny" selected>tiny（とても小さい、（オススメ））</option>
                     </select>
                 </div>
             </div>
@@ -66,7 +66,7 @@
                     <label for="base" class="form-label">テキスト</label>
                     <input type="text" class="form-control" id="base" placeholder="超電磁砲">
                 </div>
-                <div class="col-3">
+                <div class="col-4">
                     <label for="base-size" class="form-label">フォントサイズ</label>
                     <select class="form-select" id="base-size">
                         <option value="\Huge">Huge（とても大きい）</option>
@@ -74,15 +74,15 @@
                         <option value="\LARGE">LARGE</option>
                         <option value="\Large">Large</option>
                         <option value="\large">large</option>
-                        <option value="\normalsize" selected>normalsize（オススメ）</option>
-                        <option value="\footnotesize">footnotesize</option>
+                        <option value="\normalsize" selected>normalsize</option>
+                        <option value="\footnotesize" selected>footnotesize（オススメ）</option>
                         <option value="\scriptsize">scriptsize</option>
                         <option value="\tiny">tiny（とても小さい）</option>
                     </select>
                 </div>
             </div>
         </div>
-        <div class="row mb-3">
+        <div class="row mb-4">
             <div class="col">
                 <label for="result" class="form-label">プレビュー</label>
                 <div id="result" class="mb-3">
@@ -119,7 +119,7 @@
             const elemns = document.querySelectorAll(selector);
             return elemns.length > 1 ? elemns : elemns[0];
         };
-        $$('input').forEach(element => {
+        $$('input,select').forEach(element => {
             element.addEventListener('input', () => {
                 const ruby = $$('#ruby').value;
                 const base = $$('#base').value;
