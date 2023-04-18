@@ -5,3 +5,7 @@
 ## Description
 
 A web application that generates ruby-lettered strings in KaTeX format for Misskey v11.
+
+## Issues
+
+- No copy button in KaTeX representation area and textarea
