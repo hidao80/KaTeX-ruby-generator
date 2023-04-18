@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>katex ruby generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.6/katex.min.css"
+        integrity="sha512-j/3yaXXhIsoNRmGm3OWB2SyEeOMUA/XWlgdM2yREyNN6Fyd/0z4R8B1qzTDGLbWOTwdOd9qwBK9aQ8JJMmH6Zw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.6/katex.min.js"
+        integrity="sha512-BO1ZODZBRkk9BMiAhkVp5tFv8TgccbNMW1bgudeCKFObgt9dOIGxYDFlAiUd9EZ8HcerH5fVtRrEET921aD3Jg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.6/contrib/auto-render.min.js"
+        integrity="sha512-iWiuBS5nt6r60fCz26Nd0Zqe0nbk1ZTIQbl3Kv7kYsX+yKMUFHzjaH2+AnM6vp2Xs+gNmaBAVWJjSmuPw76Efg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js"
+        integrity="sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css"
+        integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            width: 60vw;
+            margin: 0 auto;
+        }
+
+        main {
+            width: 100%;
+        }
+
+        input, select {
+            font-size: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="mt-5">
+        <div>
+            <h1>\(\KaTeX \sf ルビジェネレーター \space for \space Misskey \space v11\)</h1>
+            <div class="mb-3 row">
+                <div class="col-6">
+                    <label for="ruby" class="form-label">ルビ</label>
+                    <input type="text" class="form-control" id="ruby" placeholder="レールガン">
+                </div>
+                <div class="col-3">
+                    <label for="ruby-size" class="form-label">フォントサイズ</label>
+                    <select class="form-select" id="ruby-size">
+                        <option value="\Huge">Huge（とても大きい）</option>
+                        <option value="\huge">huge</option>
+                        <option value="\LARGE">LARGE</option>
+                        <option value="\Large">Large</option>
+                        <option value="\large">large</option>
+                        <option value="\normalsize">normalsize（標準）</option>
+                        <option value="\footnotesize">footnotesize</option>
+                        <option value="\scriptsize" selected>scriptsize（オススメ）</option>
+                        <option value="\tiny">tiny（とても小さい）</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <div class="col-6">
+                    <label for="base" class="form-label">テキスト</label>
+                    <input type="text" class="form-control" id="base" placeholder="超電磁砲">
+                </div>
+                <div class="col-3">
+                    <label for="base-size" class="form-label">フォントサイズ</label>
+                    <select class="form-select" id="base-size">
+                        <option value="\Huge">Huge（とても大きい）</option>
+                        <option value="\huge">huge</option>
+                        <option value="\LARGE">LARGE</option>
+                        <option value="\Large">Large</option>
+                        <option value="\large">large</option>
+                        <option value="\normalsize" selected>normalsize（オススメ）</option>
+                        <option value="\footnotesize">footnotesize</option>
+                        <option value="\scriptsize">scriptsize</option>
+                        <option value="\tiny">tiny（とても小さい）</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label for="result" class="form-label">プレビュー</label>
+                <div id="result" class="mb-3">
+                    \(\overset{\scriptsize \sf レールガン}{\normalsize \sf 超電磁砲}\)
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label for="source" class="form-label">KaTeX表現</label>
+                <div class="mb-3">
+                    <pre><code id="source">
+                        \(\overset{\scriptsize \sf レールガン}{\normalsize  \sf 超電磁砲}\)
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="base" class="form-label">テキスト全体編集用</label>
+            <textarea id="katex_markup" class="form-control"></textarea>
+        </div>
+    </main>
+    <script>
+        function render() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    { left: "\\[", right: "\\]", display: true },
+                    { left: "$", right: "$", display: false },
+                    { left: "\\(", right: "\\)", display: true },
+                ]
+            });
+        }
+        const $$ = (selector) => {
+            const elemns = document.querySelectorAll(selector);
+            return elemns.length > 1 ? elemns : elemns[0];
+        };
+        $$('input').forEach(element => {
+            element.addEventListener('input', () => {
+                const ruby = $$('#ruby').value;
+                const base = $$('#base').value;
+                const rubySize = $$('#ruby-size').value;
+                const baseSize = $$('#base-size').value;
+                const katex = `\\(\\overset{${rubySize} \\sf ${ruby}}{${baseSize}  \\sf ${base}}\\)`;
+                $$('#result').innerHTML = katex;
+                $$('#source').innerHTML = katex;
+                render();
+            });
+        });
+
+        // タイトルのkatex表現を描画する
+        render();
+    </script>
+</body>
+
+</html>
