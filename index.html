@@ -39,6 +39,16 @@
         input, select {
             font-size: 2rem;
         }
+        
+        #source {
+            background-color: none;
+            transiton: 0.5s;
+        }
+        
+        #source:active {
+            background-color: var(--bs-success);
+            transition: 1s;
+        }
     </style>
 </head>
 
@@ -51,7 +61,7 @@
                     <label for="ruby" class="form-label">ルビ</label>
                     <input type="text" class="form-control" id="ruby" placeholder="レールガン">
                 </div>
-                <div class="col-lg-4 col-6">
+                <div class="col-6">
                     <label for="ruby-size" class="form-label">フォントサイズ</label>
                     <select class="form-select" id="ruby-size">
                         <option value="\Huge">Huge（とても大きい）</option>
@@ -71,7 +81,7 @@
                     <label for="base" class="form-label">テキスト</label>
                     <input type="text" class="form-control" id="base" placeholder="超電磁砲">
                 </div>
-                <div class="col-lg-4 col-6">
+                <div class="col-6">
                     <label for="base-size" class="form-label">フォントサイズ</label>
                     <select class="form-select" id="base-size">
                         <option value="\Huge">Huge（とても大きい）</option>
@@ -99,7 +109,7 @@
             <div class="col">
                 <label for="source" class="form-label">KaTeX表現（クリックするとクリップボードへコピーします）</label>
                 <div class="mb-3">
-                    <pre class="form-text text-center"><code id="source">
+                    <pre class="text-center"><code id="source">
 \(\overset{\scriptsize \sf レールガン}{\normalsize \sf 超電磁砲}\)
                     </code></pre>
                 </div>
@@ -152,7 +162,7 @@
          * KaTeXソースをクリックしたら黙ってコピー
          */
         $$('#source').addEventListener('click', async (e) => {
-            await navigator?.clipboard?.writeText(e.currentTerget.textContect);
+            await navigator?.clipboard?.writeText(e.currentTarget.innerText);  
         });
 
         // タイトルのkatex表現を描画する
