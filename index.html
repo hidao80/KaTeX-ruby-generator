@@ -99,8 +99,9 @@
             <div class="col">
                 <label for="source" class="form-label">KaTeX表現</label>
                 <div class="mb-3">
+                    <label for="source" class="form-label">クリックするとクリップボードへコピーします</label>
                     <pre><code id="source">
-                        \(\overset{\scriptsize \sf レールガン}{\normalsize  \sf 超電磁砲}\)
+\(\overset{\scriptsize \sf レールガン}{\normalsize \sf 超電磁砲}\)
                     </code></pre>
                 </div>
             </div>
@@ -135,6 +136,9 @@
                 $$('#source').innerHTML = katex;
                 render();
             });
+        });
+        $$('code').addEventListener('click', async () => {
+            await navigator?.clipboard?.writeText($$('#source').value);
         });
 
         // タイトルのkatex表現を描画する
