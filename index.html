@@ -44,7 +44,7 @@
 
 <body>
     <h1>\(\KaTeX \sf ルビジェネレーター\ for\ Misskey\ v11\)</h1>
-    <main class="mt-5">
+    <main class="mt-2">
         <div>
             <div class="mb-3 row">
                 <div class="col-6">
@@ -90,7 +90,7 @@
         <div class="row mb-4">
             <div class="col">
                 <label for="result" class="form-label">プレビュー</label>
-                <div id="result" class="form-text>
+                <div id="result">
                     \(\overset{\scriptsize \sf レールガン}{\normalsize \sf 超電磁砲}\)
                 </div>
             </div>
@@ -99,7 +99,7 @@
             <div class="col">
                 <label for="source" class="form-label">KaTeX表現（クリックするとクリップボードへコピーします）</label>
                 <div class="mb-3">
-                    <pre class="form-text"><code id="source">
+                    <pre class="form-text text-center"><code id="source">
 \(\overset{\scriptsize \sf レールガン}{\normalsize \sf 超電磁砲}\)
                     </code></pre>
                 </div>
@@ -111,6 +111,9 @@
         </div>
     </main>
     <script>
+        /**
+         * KaTeX描画
+         */
         function render() {
             renderMathInElement(document.body, {
                 delimiters: [
@@ -120,10 +123,18 @@
                 ]
             });
         }
+        
+        /**
+         * querySelector()のエイリアス+α
+         */
         const $$ = (selector) => {
             const elemns = document.querySelectorAll(selector);
             return elemns.length > 1 ? elemns : elemns[0];
         };
+        
+        /**
+         * 入力があったらリアルタイムに再描画
+         */
         $$('input,select').forEach(element => {
             element.addEventListener('input', () => {
                 const ruby = $$('#ruby').value.trim().replaceAll(" ", "\\ ");
@@ -136,8 +147,12 @@
                 render();
             });
         });
-        $$('code').addEventListener('click', async () => {
-            await navigator?.clipboard?.writeText($$('#source').value);
+        
+        /**
+         * KaTeXソースをクリックしたら黙ってコピー
+         */
+        $$('#source').addEventListener('click', async (e) => {
+            await navigator?.clipboard?.writeText(e.currentTerget.textContect);
         });
 
         // タイトルのkatex表現を描画する
