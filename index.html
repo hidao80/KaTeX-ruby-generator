@@ -24,12 +24,15 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         body {
-            width: 60vw;
+            width: 100dvw;
             margin: 0 auto;
         }
 
         main {
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;l
         }
 
         input, select {
@@ -126,7 +129,7 @@
                 const base = $$('#base').value.trim().replaceAll(" ", "\\ ");
                 const rubySize = $$('#ruby-size').value;
                 const baseSize = $$('#base-size').value;
-                const katex = `\\(\\overset{${rubySize} \\sf ${ruby}}{${baseSize}  \\sf ${base}}\\)`;
+                const katex = `\\(\\overset{${rubySize} \\sf ${ruby}}{${baseSize} \\sf ${base}}\\)`;
                 $$('#result').innerHTML = katex;
                 $$('#source').innerHTML = katex;
                 render();
