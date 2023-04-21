@@ -122,8 +122,8 @@
         };
         $$('input,select').forEach(element => {
             element.addEventListener('input', () => {
-                const ruby = $$('#ruby').value;
-                const base = $$('#base').value;
+                const ruby = $$('#ruby').value.trim().replaceAll(" ", "\\ ");
+                const base = $$('#base').value.trim().replaceAll(" ", "\\ ");
                 const rubySize = $$('#ruby-size').value;
                 const baseSize = $$('#base-size').value;
                 const katex = `\\(\\overset{${rubySize} \\sf ${ruby}}{${baseSize}  \\sf ${base}}\\)`;
