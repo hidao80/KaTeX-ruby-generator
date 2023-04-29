@@ -32,7 +32,8 @@
             width: 100%;
         }
 
-        input, select {
+        input,
+        select {
             font-size: 2rem;
         }
     </style>
@@ -43,12 +44,12 @@
         <div>
             <h1>\(\KaTeX \sf ルビジェネレーター \space for \space Misskey \space v11\)</h1>
             <div class="mb-3 row">
-                <div class="col-6">
+                <div class="col-md-3">
                     <label for="ruby" class="form-label">ルビ</label>
                     <input type="text" class="form-control" id="ruby" placeholder="レールガン">
                 </div>
-                <div class="col-4">
-                    <label for="ruby-size" class="form-label">フォントサイズ</label>
+                <div class="col-md-3">
+                    <label for="ruby-size" class="form-label">ルビサイズ</label>
                     <select class="form-select" id="ruby-size">
                         <option value="\Huge">Huge（とても大きい）</option>
                         <option value="\huge">huge</option>
@@ -61,24 +62,76 @@
                         <option value="\tiny" selected>tiny（とても小さい、オススメ）</option>
                     </select>
                 </div>
+                <div class="col-md-3">
+                    <label for="ruby-color" class="form-label">ルビ色</label>
+                    <input type="search" id="ruby-color" class="form-control" list="rubyColorOptions"
+                        placeholder="HTMLで定義されている色名を指定して下さい" value="black">
+                    <datalist id="rubyColorOptions">
+                        <option value="black" selected></option>
+                        <option value="red"></option>
+                        <option value="purple"></option>
+                        <option value="green"></option>
+                        <option value="lime"></option>
+                        <option value="yellow"></option>
+                        <option value="blue"></option>
+                        <option value="aqua"></option>
+                        <option value="white"></option>
+                    </datalist>
+                </div>
+                <div class="col-md-3">
+                    <label for="ruby-font" class="form-label">ルビフォント</label>
+                    <select class="form-select" id="ruby-font">
+                        <option value="\sf" selected>サンセリフ体（オススメ）</option>
+                        <option value="\bf">ボールド体</option>
+                        <option value="\it">イタリック体</option>
+                        <option value="\rm">ローマン体</option>
+                        <option value="\tt">タイプライタ体</option>
+                    </select>
+                </div>
             </div>
             <div class="mb-3 row">
-                <div class="col-6">
-                    <label for="base" class="form-label">テキスト</label>
+                <div class="col-md-3">
+                    <label for="base" class="form-label">ベース</label>
                     <input type="text" class="form-control" id="base" placeholder="超電磁砲">
                 </div>
-                <div class="col-4">
-                    <label for="base-size" class="form-label">フォントサイズ</label>
+                <div class="col-md-3">
+                    <label for="base-size" class="form-label">ベースサイズ</label>
                     <select class="form-select" id="base-size">
                         <option value="\Huge">Huge（とても大きい）</option>
                         <option value="\huge">huge</option>
                         <option value="\LARGE">LARGE</option>
                         <option value="\Large">Large</option>
                         <option value="\large">large</option>
-                        <option value="\normalsize" selected>normalsize（標準）</option>
+                        <option value="\normalsize">normalsize（標準）</option>
                         <option value="\footnotesize" selected>footnotesize（オススメ）</option>
                         <option value="\scriptsize">scriptsize</option>
                         <option value="\tiny">tiny（とても小さい）</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="base-color" class="form-label">ベース色</label>
+                    <input type="search" id="base-color" class="form-control" list="baseColorOptions"
+                        placeholder="HTMLで定義されている色名を指定して下さい" value="black">
+                    <datalist id="baseColorOptions">
+                        <option value="black" selected></option>
+                        <option value="red"></option>
+                        <option value="purple"></option>
+                        <option value="green"></option>
+                        <option value="lime"></option>
+                        <option value="yellow"></option>
+                        <option value="blue"></option>
+                        <option value="aqua"></option>
+                        <option value="white"></option>
+                    </datalist>
+                </div>
+                <div class="col-md-3">
+                    <label for="base-font" class="form-label">ベースフォント</label>
+                    <select class="form-select" id="base-font">
+                        <option value="\sf" selected>サンセリフ体（オススメ）</option>
+                        <option value="\bf">ボールド体</option>
+                        <option value="\it">イタリック体</option>
+                        <option value="\rm">ローマン体</option>
+                        <option value="\tt">タイプライタ体</option>
                     </select>
                 </div>
             </div>
@@ -86,18 +139,15 @@
         <div class="row mb-4">
             <div class="col">
                 <label for="result" class="form-label">プレビュー</label>
-                <div id="result" class="mb-3">
-                    \(\overset{\scriptsize \sf レールガン}{\normalsize \sf 超電磁砲}\)
+                <div id="result" class="mb-3 text-center">
                 </div>
             </div>
         </div>
         <div class="row mb-3">
             <div class="col">
                 <label for="source" class="form-label">KaTeX表現</label>
-                <div class="mb-3">
-                    <pre><code id="source">
-                        \(\overset{\scriptsize \sf レールガン}{\normalsize  \sf 超電磁砲}\)
-                    </code></pre>
+                <div class="mb-3 text-center">
+                    <pre><code id="source"></code></pre>
                 </div>
             </div>
         </div>
@@ -120,20 +170,28 @@
             const elemns = document.querySelectorAll(selector);
             return elemns.length > 1 ? elemns : elemns[0];
         };
+        function setValue() {
+            const ruby = $$('#ruby').value || 'レールガン';
+            const base = $$('#base').value || '超電磁砲';
+            const rubySize = $$('#ruby-size').value;
+            const baseSize = $$('#base-size').value;
+            const rubyColor = $$('#ruby-color').value || 'black';
+            const baseColor = $$('#base-color').value || 'black';
+            const rubyFont = $$('#ruby-font').value;
+            const baseFont = $$('#base-font').value;
+            const katex = `\\(\\overset{${rubySize} ${rubyFont} \\textcolor{${rubyColor}}{${ruby}}}{${baseSize} ${baseFont} \\textcolor{${baseColor}}{${base}}}\\)`;
+            $$('#result').innerHTML = katex;
+            $$('#source').innerHTML = katex;
+        }
         $$('input,select').forEach(element => {
             element.addEventListener('input', () => {
-                const ruby = $$('#ruby').value;
-                const base = $$('#base').value;
-                const rubySize = $$('#ruby-size').value;
-                const baseSize = $$('#base-size').value;
-                const katex = `\\(\\overset{${rubySize} \\sf ${ruby}}{${baseSize}  \\sf ${base}}\\)`;
-                $$('#result').innerHTML = katex;
-                $$('#source').innerHTML = katex;
+                setValue();
                 render();
             });
         });
 
         // タイトルのkatex表現を描画する
+        setValue();
         render();
     </script>
 </body>
