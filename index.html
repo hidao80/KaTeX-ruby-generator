@@ -24,25 +24,39 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         body {
-            width: 60vw;
+            width: 100dvw;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         main {
-            width: 100%;
+            width: 70%;
+            margin: 0 auto;
         }
 
         input,
         select {
             font-size: 2rem;
         }
+        
+        #source {
+            background-color: none;
+            transition: 0.5s;
+        }
+        
+        #source:active {
+            background-color: #0dcaf0; /* --bs-info */
+            transition: 0s;
+        }
     </style>
 </head>
 
 <body>
-    <main class="mt-5">
+    <h1>\(\KaTeX \sf ルビジェネレーター\ for\ Misskey\ v11\)</h1>
+    <main class="mt-2">
         <div>
-            <h1>\(\KaTeX \sf ルビジェネレーター \space for \space Misskey \space v11\)</h1>
             <div class="mb-3 row">
                 <div class="col-md-3">
                     <label for="ruby" class="form-label">ルビ</label>
@@ -157,6 +171,9 @@
         </div>
     </main>
     <script>
+        /**
+         * KaTeX描画
+         */
         function render() {
             renderMathInElement(document.body, {
                 delimiters: [
@@ -166,6 +183,10 @@
                 ]
             });
         }
+        
+        /**
+         * querySelector()のエイリアス+α
+         */
         const $$ = (selector) => {
             const elemns = document.querySelectorAll(selector);
             return elemns.length > 1 ? elemns : elemns[0];
@@ -188,6 +209,13 @@
                 setValue();
                 render();
             });
+        });
+        
+        /**
+         * KaTeXソースをクリックしたら黙ってコピー
+         */
+        $$('#source').addEventListener('click', async (e) => {
+            await navigator?.clipboard?.writeText(e.currentTarget.innerText);  
         });
 
         // タイトルのkatex表現を描画する
