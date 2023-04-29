@@ -16,11 +16,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.6/contrib/auto-render.min.js"
         integrity="sha512-iWiuBS5nt6r60fCz26Nd0Zqe0nbk1ZTIQbl3Kv7kYsX+yKMUFHzjaH2+AnM6vp2Xs+gNmaBAVWJjSmuPw76Efg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js"
-        integrity="sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g=="
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"
+        integrity="sha512-i9cEfJwUwViEPFKdC1enz4ZRGBj8YQo6QByFTF92YXHi7waCqyexvRD75S5NVTsSiTv7rKWqG9Y5eFxmRsOn0A=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css"
         integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         body {
@@ -40,15 +43,12 @@
         select {
             font-size: 2rem;
         }
-        
-        #source {
-            background-color: none;
-            transition: 0.5s;
-        }
-        
-        #source:active {
-            background-color: #0dcaf0; /* --bs-info */
-            transition: 0s;
+
+        #post-preview .katex-display,
+        #post-preview .katex {
+            display: inline-block;
+            margin-bottom: 0;
+            margin-top: 0;
         }
     </style>
 </head>
@@ -60,7 +60,7 @@
             <div class="mb-3 row">
                 <div class="col-md-3">
                     <label for="ruby" class="form-label">ルビ</label>
-                    <input type="text" class="form-control" id="ruby" placeholder="レールガン">
+                    <input type="text" class="form-control" id="ruby" placeholder="ジャッジメント">
                 </div>
                 <div class="col-md-3">
                     <label for="ruby-size" class="form-label">ルビサイズ</label>
@@ -106,7 +106,7 @@
             <div class="mb-3 row">
                 <div class="col-md-3">
                     <label for="base" class="form-label">ベース</label>
-                    <input type="text" class="form-control" id="base" placeholder="超電磁砲">
+                    <input type="text" class="form-control" id="base" placeholder="風紀委員">
                 </div>
                 <div class="col-md-3">
                     <label for="base-size" class="form-label">ベースサイズ</label>
@@ -152,29 +152,57 @@
         </div>
         <div class="row mb-4">
             <div class="col">
-                <label for="result" class="form-label">プレビュー</label>
-                <div id="result" class="mb-3 text-center">
+                <label for="preview" class="form-label">プレビュー</label>
+                <div id="preview" class="mb-3 text-center">
                 </div>
             </div>
         </div>
         <div class="row mb-3">
             <div class="col">
                 <label for="source" class="form-label">KaTeX表現</label>
+                <i id="copy-source" class="fa-sharp fa-regular fa-copy btn btn-outline-secondary"
+                    data-bs-trigger="manual" data-bs-toggle="tooltip" data-bs-placement="top" title="copy!"></i>
                 <div class="mb-3 text-center">
                     <pre><code id="source"></code></pre>
                 </div>
             </div>
         </div>
-        <div class="mb-3">
-            <label for="base" class="form-label">投稿全体編集用</label>
-            <textarea id="katex_markup" class="form-control" rows="6"></textarea>
+        <div class="row mb-3">
+            <div class="col-6">
+                <label for="post-source" class="form-label">投稿全体編集用</label>
+                <i id="copy-post" class="fa-sharp fa-regular fa-copy btn btn-outline-secondary" data-bs-trigger="manual"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="copy!"></i>
+                <textarea id="post-source" class="form-control"
+                    rows="6">\(\overset{\tiny \sf \textcolor{black}{ジャッジメント}}{\footnotesize \sf \textcolor{black}{風紀委員}}\)ですの！</textarea>
+            </div>
+            <div class="col-6">
+                <label for="post-preview" class="form-label">プレビュー</label>
+                <div id="post-preview" class="form-control"></div>
+            </div>
         </div>
     </main>
     <script>
         /**
-         * KaTeX描画
+         * 描画処理
          */
         function render() {
+            const post = $$('#post-source').value;
+            const ruby = $$('#ruby').value || 'ジャッジメント';
+            const base = $$('#base').value || '風紀委員';
+            const rubySize = $$('#ruby-size').value;
+            const baseSize = $$('#base-size').value;
+            const rubyColor = $$('#ruby-color').value || 'black';
+            const baseColor = $$('#base-color').value || 'black';
+            const rubyFont = $$('#ruby-font').value;
+            const baseFont = $$('#base-font').value;
+            const katex = `\\(\\overset{${rubySize} ${rubyFont} \\textcolor{${rubyColor}}{${ruby}}}{${baseSize} ${baseFont} \\textcolor{${baseColor}}{${base}}}\\)`;
+            $$('#preview').innerHTML = katex;
+            $$('#source').innerHTML = katex;
+            $$('#post-preview').innerHTML = post;
+
+            /**
+             * KaTeXの描画処理
+             */
             renderMathInElement(document.body, {
                 delimiters: [
                     { left: "\\[", right: "\\]", display: true },
@@ -183,7 +211,7 @@
                 ]
             });
         }
-        
+
         /**
          * querySelector()のエイリアス+α
          */
@@ -191,36 +219,37 @@
             const elemns = document.querySelectorAll(selector);
             return elemns.length > 1 ? elemns : elemns[0];
         };
-        function setValue() {
-            const ruby = $$('#ruby').value || 'レールガン';
-            const base = $$('#base').value || '超電磁砲';
-            const rubySize = $$('#ruby-size').value;
-            const baseSize = $$('#base-size').value;
-            const rubyColor = $$('#ruby-color').value || 'black';
-            const baseColor = $$('#base-color').value || 'black';
-            const rubyFont = $$('#ruby-font').value;
-            const baseFont = $$('#base-font').value;
-            const katex = `\\(\\overset{${rubySize} ${rubyFont} \\textcolor{${rubyColor}}{${ruby}}}{${baseSize} ${baseFont} \\textcolor{${baseColor}}{${base}}}\\)`;
-            $$('#result').innerHTML = katex;
-            $$('#source').innerHTML = katex;
-        }
-        $$('input,select').forEach(element => {
-            element.addEventListener('input', () => {
-                setValue();
-                render();
-            });
-        });
-        
+
+        // タイトルとプレビューのkatex表現を描画する
+        render();
+
         /**
-         * KaTeXソースをクリックしたら黙ってコピー
+         * 入力があったら描画処理を行う
          */
-        $$('#source').addEventListener('click', async (e) => {
-            await navigator?.clipboard?.writeText(e.currentTarget.innerText);  
+        $$('input,select,textarea').forEach(element => {
+            element.addEventListener('input', render)
         });
 
-        // タイトルのkatex表現を描画する
-        setValue();
-        render();
+        /**
+         * コピーボタンの初期化
+         */
+        $$("#copy-source,#copy-post").forEach(elem => {
+            // ツールチップの初期化
+            const tooltip = new bootstrap.Tooltip(elem);
+
+            /**
+             * ツールチップを表示してから1秒後に消す
+             * コピーボタンをクリックしたらコピー
+             */
+            elem.addEventListener('click', async e => {
+                e.preventDefault();
+                e.stopPropagation();
+                tooltip.show();
+                setTimeout(() => tooltip.hide(), 1000);
+                const textContent = e.target.id === 'copy-source' ? $$('#source').textContent : $$('#post-source').value;
+                await navigator?.clipboard?.writeText(textContent.trim());
+            });
+        });
     </script>
 </body>
 
