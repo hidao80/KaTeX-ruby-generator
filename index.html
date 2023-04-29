@@ -212,8 +212,8 @@
             const baseColor = $$('#base-color').value;
             const rubyFont = $$('#ruby-font').value;
             const baseFont = $$('#base-font').value;
-            const rubyText = colorFunction(rubyColor, ruby);
-            const baseText = colorFunction(baseColor, base);
+            const rubyText = colorFunction(rubyColor, ruby.trim().replaceAll(" ", '\\ '));
+            const baseText = colorFunction(baseColor, base.trim().replaceAll(" ", '\\ '));
             const katex = `\\(\\overset{${rubySize} ${rubyFont} ${rubyText}}{${baseSize} ${baseFont} ${baseText}}\\)`;
             $$('#preview').innerHTML = katex;
             $$('#source').innerHTML = katex;
