@@ -79,9 +79,10 @@
                 <div class="col-md-3">
                     <label for="ruby-color" class="form-label">ルビ色</label>
                     <input type="search" id="ruby-color" class="form-control" list="rubyColorOptions"
-                        placeholder="HTMLで定義されている色名を指定して下さい" value="black">
+                        placeholder="HTMLで定義されている色名を指定して下さい" value="">
                     <datalist id="rubyColorOptions">
-                        <option value="black" selected></option>
+                        <option value=""></option>
+                        <option value="black"></option>
                         <option value="red"></option>
                         <option value="purple"></option>
                         <option value="green"></option>
@@ -125,9 +126,10 @@
                 <div class="col-md-3">
                     <label for="base-color" class="form-label">ベース色</label>
                     <input type="search" id="base-color" class="form-control" list="baseColorOptions"
-                        placeholder="HTMLで定義されている色名を指定して下さい" value="black">
+                        placeholder="HTMLで定義されている色名を指定して下さい" value="">
                     <datalist id="baseColorOptions">
-                        <option value="black" selected></option>
+                        <option value=""></option>
+                        <option value="black"></option>
                         <option value="red"></option>
                         <option value="purple"></option>
                         <option value="green"></option>
@@ -173,7 +175,7 @@
                 <i id="copy-post" class="fa-sharp fa-regular fa-copy btn btn-outline-secondary" data-bs-trigger="manual"
                     data-bs-toggle="tooltip" data-bs-placement="top" title="copy!"></i>
                 <textarea id="post-source" class="form-control"
-                    rows="6">\(\overset{\tiny \sf \textcolor{black}{ジャッジメント}}{\footnotesize \sf \textcolor{black}{風紀委員}}\)ですの！</textarea>
+                    rows="6">\(\overset{\tiny \sf ジャッジメント}{\footnotesize \sf 風紀委員}\)ですの！</textarea>
             </div>
             <div class="col-6">
                 <label for="post-preview" class="form-label">プレビュー</label>
@@ -183,6 +185,21 @@
     </main>
     <script>
         /**
+         * querySelector()のエイリアス+α
+         */
+        const $$ = (selector) => {
+            const elemns = document.querySelectorAll(selector);
+            return elemns.length > 1 ? elemns : elemns[0];
+        };
+
+        /**
+         * 色指定がないときは関数を外す
+         */
+        function colorFunction(color, text) {
+            return color ? `\\textcolor{${color}}{${text}}` : text;
+        }
+
+        /**
          * 描画処理
          */
         function render() {
@@ -191,11 +208,13 @@
             const base = $$('#base').value || '風紀委員';
             const rubySize = $$('#ruby-size').value;
             const baseSize = $$('#base-size').value;
-            const rubyColor = $$('#ruby-color').value || 'black';
-            const baseColor = $$('#base-color').value || 'black';
+            const rubyColor = $$('#ruby-color').value;
+            const baseColor = $$('#base-color').value;
             const rubyFont = $$('#ruby-font').value;
             const baseFont = $$('#base-font').value;
-            const katex = `\\(\\overset{${rubySize} ${rubyFont} \\textcolor{${rubyColor}}{${ruby}}}{${baseSize} ${baseFont} \\textcolor{${baseColor}}{${base}}}\\)`;
+            const rubyText = colorFunction(rubyColor, ruby);
+            const baseText = colorFunction(baseColor, base);
+            const katex = `\\(\\overset{${rubySize} ${rubyFont} ${rubyText}}{${baseSize} ${baseFont} ${baseText}}\\)`;
             $$('#preview').innerHTML = katex;
             $$('#source').innerHTML = katex;
             $$('#post-preview').innerHTML = post;
@@ -211,14 +230,6 @@
                 ]
             });
         }
-
-        /**
-         * querySelector()のエイリアス+α
-         */
-        const $$ = (selector) => {
-            const elemns = document.querySelectorAll(selector);
-            return elemns.length > 1 ? elemns : elemns[0];
-        };
 
         // タイトルとプレビューのkatex表現を描画する
         render();
