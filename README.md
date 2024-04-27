@@ -1,6 +1,7 @@
 # KaTeX ruby generator
 
 ![GitHub](https://img.shields.io/github/license/hidao80/katex-ruby-generator?style=plastic)
+![PWA](https://img.shields.io/badge/PWA-Yes-4BC51D.svg)
 
 ## Description
 
