@@ -10,3 +10,11 @@ A web application that generates ruby-lettered strings in KaTeX format for Missk
 ## Issues
 
 - No copy button in KaTeX representation area and textarea
+
+## Contributors
+
+<a href="https://github.com/hidao80/KaTeX-ruby-generator/graphs/contributors">
+  <img width="72" src="https://contrib.rocks/image?repo=hidao80/KaTeX-ruby-generator" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
